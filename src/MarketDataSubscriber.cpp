@@ -35,14 +35,14 @@ void MarketDataSubscriber::OnFrontDisconnected(int nReason)
 void MarketDataSubscriber::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
   cerr << "-->" << __FUNCTION__ << endl;
-  cout << "OnRspUserLogin:" << pRspInfo->ErrorID << " " << pRspInfo->ErrorMsg << endl;
-  cout << "TradingDay:" << pRspUserLogin->TradingDay << endl;
-  cout << "LoginTime:" << pRspUserLogin->LoginTime << endl;
-  cout << "BrokerID:" << pRspUserLogin->BrokerID << endl;
-  cout << "UserID:" << pRspUserLogin->UserID << endl;
+  cerr << "OnRspUserLogin:" << pRspInfo->ErrorID << " " << pRspInfo->ErrorMsg << endl;
+  cerr << "TradingDay:" << pRspUserLogin->TradingDay << endl;
+  cerr << "LoginTime:" << pRspUserLogin->LoginTime << endl;
+  cerr << "BrokerID:" << pRspUserLogin->BrokerID << endl;
+  cerr << "UserID:" << pRspUserLogin->UserID << endl;
 
-  char* ppInstrumentId[2] = {"IF1712", "IC1712"};
-  int iInstrumentId = 2;
+  char* ppInstrumentId[1] = {"IF1712"};
+  int iInstrumentId = 1;
   
   int ret = mpApi->SubscribeMarketData(ppInstrumentId, iInstrumentId);
   cerr << "SubscribeMarketData:" << ret << endl;
