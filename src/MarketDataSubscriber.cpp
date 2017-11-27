@@ -1,29 +1,29 @@
-#include <iostream>
+#include "MarketDataSubscriber.hpp"
 
+#include <ctime>
+#include <iostream>
 #include <stdio.h>
 #include <string.h>
-
-#include "MarketDataSubscriber.hpp"
+#include <cstdlib>
 
 using namespace std;
 
-MarketDataSubscriber::MarketDataSubscriber(CThostFtdcMdApi* pApi)
+MarketDataSubscriber::MarketDataSubscriber(CThostFtdcMdApi* pApi, const char* pBrokerId, const char* pUserId, const char* pPassword)
   : mpApi(pApi), mRequestId(0)
 {
+  memset(&mReq, 0, sizeof(mReq));
+
+  strcpy(mReq.BrokerID, pBrokerId);
+  strcpy(mReq.UserID, pUserId);
+  strcpy(mReq.Password, pPassword);
 }
 
 void MarketDataSubscriber::OnFrontConnected()
 {
   cerr << "-->" << __FUNCTION__ << endl;    
   
-  CThostFtdcReqUserLoginField req;
-  memset(&req, 0, sizeof(req));
-  strcpy(req.BrokerID, "9999");
-  strcpy(req.UserID, "107262");
-  strcpy(req.Password, "12#$qwER");
-
   int ret = -1;
-  ret = mpApi->ReqUserLogin(&req, mRequestId);
+  ret = mpApi->ReqUserLogin(&mReq, mRequestId);
   cout << "ReqUserLogin:" << ret << endl;
 }
 
@@ -41,9 +41,19 @@ void MarketDataSubscriber::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserL
   cerr << "BrokerID:" << pRspUserLogin->BrokerID << endl;
   cerr << "UserID:" << pRspUserLogin->UserID << endl;
 
-  char* ppInstrumentId[1] = {"IF1712"};
-  int iInstrumentId = 1;
-  
+  ifstream in("./etc/instruments");
+  string instrument;
+  char* ppInstrumentId[1024];
+  int iInstrumentId = 0;
+  while (getline(in, instrument))
+    {
+      cout << instrument << " " << instrument.size() << endl;
+      ppInstrumentId[iInstrumentId] = (char*)malloc(instrument.size()+1);
+      memset(ppInstrumentId[iInstrumentId], 0, instrument.size()+1);
+      strcpy(ppInstrumentId[iInstrumentId], instrument.c_str());
+      iInstrumentId++;
+    }
+
   int ret = mpApi->SubscribeMarketData(ppInstrumentId, iInstrumentId);
   cerr << "SubscribeMarketData:" << ret << endl;
 }
@@ -58,7 +68,14 @@ void MarketDataSubscriber::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *
 {
   cerr << "-->" << __FUNCTION__ << endl;
   cerr << pDepthMarketData->InstrumentID << endl;
+  string instrument(pDepthMarketData->InstrumentID);
+  string file_name = "./data/"+instrument;
+  ofstream out(file_name.c_str(), std::ofstream::out | std::ofstream::app);
+  std::time_t result = std::time(NULL);
+  
+  out << std::asctime(std::localtime(&result)) << pDepthMarketData->LastPrice << endl;
   cerr << pDepthMarketData->LastPrice << endl;
   cerr << pDepthMarketData->AskPrice1 << endl;
   cerr << pDepthMarketData->BidPrice1 << endl;
+  out.close();
 }
