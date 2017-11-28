@@ -14,9 +14,9 @@ Ftdc* Ftdc::CreateFtdc()
   MarketDataSubscriber* pSubscriber = new MarketDataSubscriber(pApi, "9999", "107262", "12#$qwER");  
   pApi->RegisterSpi(pSubscriber);
   // simnow
-  // char pFront[] = "tcp://180.168.146.187:10011";
+  char pFront[] = "tcp://180.168.146.187:10011";
   // Guotai
-  char pFront[] = "tcp://180.169.77.111:42213";  
+  // char pFront[] = "tcp://180.169.77.111:42213";  
   pApi->RegisterFront(pFront);
 
   Ftdc* pFtdc = new Ftdc(pApi, pSubscriber);
