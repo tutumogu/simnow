@@ -1,4 +1,4 @@
-#include "MarketDataSubscriber.hpp"
+#include "FtdSubscriber.hpp"
 
 #include <ctime>
 #include <iostream>
@@ -8,8 +8,8 @@
 
 using namespace std;
 
-MarketDataSubscriber::MarketDataSubscriber(CThostFtdcMdApi* pApi, const char* pBrokerId, const char* pUserId, const char* pPassword)
-  : mpApi(pApi), mRequestId(0), mCvt("GBK", "utf-8"), mCvt2("utf-8", "GBK")
+FtdSubscriber::FtdSubscriber(CThostFtdcMdApi* pApi, const char* pBrokerId, const char* pUserId, const char* pPassword)
+  : mpApi(pApi), mRequestId(0)
 {
   memset(&mReq, 0, sizeof(mReq));
 
@@ -18,7 +18,7 @@ MarketDataSubscriber::MarketDataSubscriber(CThostFtdcMdApi* pApi, const char* pB
   strcpy(mReq.Password, pPassword);
 }
 
-void MarketDataSubscriber::OnFrontConnected()
+void FtdSubscriber::OnFrontConnected()
 {
   cerr << "-->" << __FUNCTION__ << endl;    
   
@@ -27,12 +27,12 @@ void MarketDataSubscriber::OnFrontConnected()
   cerr << "ReqUserLogin:" << ret << endl;
 }
 
-void MarketDataSubscriber::OnFrontDisconnected(int nReason)
+void FtdSubscriber::OnFrontDisconnected(int nReason)
 {
   cerr << "-->" << __FUNCTION__ << endl;  
 }
 
-void MarketDataSubscriber::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+void FtdSubscriber::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserLogin, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
   cerr << "-->" << __FUNCTION__ << endl;
   cerr << "OnRspUserLogin:" << pRspInfo->ErrorID << " " << pRspInfo->ErrorMsg << endl;
@@ -57,14 +57,14 @@ void MarketDataSubscriber::OnRspUserLogin(CThostFtdcRspUserLoginField *pRspUserL
   cerr << "SubscribeMarketData:" << ret << endl;
 }
 
-void MarketDataSubscriber::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
+void FtdSubscriber::OnRspSubMarketData(CThostFtdcSpecificInstrumentField *pSpecificInstrument, CThostFtdcRspInfoField *pRspInfo, int nRequestID, bool bIsLast)
 {
   cerr << "-->" << __FUNCTION__ << endl;
   cerr << "OnRspSubMarketData:" << pRspInfo->ErrorID << " " << pRspInfo->ErrorMsg << endl;
   cerr << pSpecificInstrument->InstrumentID << endl;
 }
 
-void MarketDataSubscriber::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData)
+void FtdSubscriber::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *pDepthMarketData)
 {
   cerr << "-->" << __FUNCTION__ << endl;
   cerr << pDepthMarketData->InstrumentID << endl;
@@ -132,14 +132,14 @@ void MarketDataSubscriber::OnRtnDepthMarketData(CThostFtdcDepthMarketDataField *
       << endl;
 }
 
-void MarketDataSubscriber::OnRspError(CThostFtdcRspInfoField *pRspInfo,
+void FtdSubscriber::OnRspError(CThostFtdcRspInfoField *pRspInfo,
 		int nRequestID, bool bIsLast)
 {
   cerr << "--->>> "<< "OnRspError" << endl;
   IsErrorRspInfo(pRspInfo);
 }
 
-bool MarketDataSubscriber::IsErrorRspInfo(CThostFtdcRspInfoField *pRspInfo)
+bool FtdSubscriber::IsErrorRspInfo(CThostFtdcRspInfoField *pRspInfo)
 {
   bool bResult = ((pRspInfo) && (pRspInfo->ErrorID != 0));
   if (bResult)
