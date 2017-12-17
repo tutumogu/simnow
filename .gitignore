@@ -1,0 +1,6 @@
+*.[oa]
+nohup.out
+src/data/*
+src/con/*
+Makefile.*
+Makefile
