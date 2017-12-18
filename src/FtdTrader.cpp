@@ -136,13 +136,13 @@ void FtdTrader::ReqOrderInsert()
 	///报单价格条件: 限价
 	req.OrderPriceType = THOST_FTDC_OPT_LimitPrice;
 	///买卖方向: 
-	req.Direction = DIRECTION;
+//	req.Direction = DIRECTION;
 	///组合开平标志: 开仓
 	req.CombOffsetFlag[0] = THOST_FTDC_OF_Open;
 	///组合投机套保标志
 	req.CombHedgeFlag[0] = THOST_FTDC_HF_Speculation;
 	///价格
-	req.LimitPrice = LIMIT_PRICE;
+//	req.LimitPrice = LIMIT_PRICE;
 	///数量: 1
 	req.VolumeTotalOriginal = 1;
 	///有效期类型: 当日有效
